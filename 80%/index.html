@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80% Keyboard Encoder/Decoder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .container {
+            width: 400px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>80% Keyboard Encoder/Decoder</h1>
+        <textarea id="input" placeholder="Enter text to encode or decode..."></textarea>
+        <button id="encodeButton">Encode</button>
+        <button id="decodeButton">Decode</button>
+        <textarea id="output" placeholder="Result..."></textarea>
+    </div>
+    <script>
+        // Define the keyboard layout as rows
+        const keyboardRows = [
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="],
+            ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
+            ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'"],
+            ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
+        ];
+
+        // Create the key position mapping
+        const keyPositionMap = {};
+        keyboardRows.forEach((row, rowIndex) => {
+            row.forEach((key, colIndex) => {
+                const position = `${rowIndex + 1}${colIndex}`; // Create positions like 00, 01, etc.
+                keyPositionMap[key] = position;
+            });
+        });
+
+        // Generate the reverse mapping for decoding
+        const positionKeyMap = Object.fromEntries(Object.entries(keyPositionMap).map(([key, pos]) => [pos, key]));
+
+        function encode(text) {
+            console.log("Encoding text:", text);
+            const encoded = text.split('').map(char => {
+                const position = keyPositionMap[char] || '?';
+                if (position === '?') {
+                    console.warn(`Character "${char}" not found in key map.`);
+                }
+                console.log(`Character "${char}" encoded as: ${position}`);
+                return position;
+            });
+            const result = encoded.join(' ');
+            console.log("Encoded result:", result);
+            return result;
+        }
+
+        function decode(code) {
+            console.log("Decoding code:", code);
+            const decoded = code.split(' ').map(pos => {
+                const char = positionKeyMap[pos] || '?';
+                if (char === '?') {
+                    console.warn(`Position "${pos}" not found in key map.`);
+                }
+                console.log(`Position "${pos}" decoded as: "${char}"`);
+                return char;
+            });
+            const result = decoded.join('');
+            console.log("Decoded result:", result);
+            return result;
+        }
+
+        document.getElementById('encodeButton').addEventListener('click', () => {
+            const input = document.getElementById('input').value;
+            const output = encode(input);
+            document.getElementById('output').value = output;
+        });
+
+        document.getElementById('decodeButton').addEventListener('click', () => {
+            const input = document.getElementById('input').value;
+            const output = decode(input);
+            document.getElementById('output').value = output;
+        });
+    </script>
+</body>
+</html>
